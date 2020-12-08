@@ -1,22 +1,15 @@
-# Errors
+# 错误码
 
-<aside class="notice">
-This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
-</aside>
-
-The Kittn API uses the following error codes:
+方便面面试API采用标准HTTP错误码来表示接口的错误:
 
 
-Error Code | Meaning
+错误码 | 含义
 ---------- | -------
-400 | Bad Request -- Your request is invalid.
-401 | Unauthorized -- Your API key is wrong.
-403 | Forbidden -- The kitten requested is hidden for administrators only.
-404 | Not Found -- The specified kitten could not be found.
-405 | Method Not Allowed -- You tried to access a kitten with an invalid method.
-406 | Not Acceptable -- You requested a format that isn't json.
-410 | Gone -- The kitten requested has been removed from our servers.
-418 | I'm a teapot.
-429 | Too Many Requests -- You're requesting too many kittens! Slow down!
-500 | Internal Server Error -- We had a problem with our server. Try again later.
-503 | Service Unavailable -- We're temporarily offline for maintenance. Please try again later.
+200 | OK -- 请求成功
+400 | Bad Request -- 接口请求参数错误.
+401 | Unauthorized -- 认证信息非法.
+403 | Forbidden -- 所访问的资源拒绝访问.
+404 | Not Found -- 访问的资源不存在.
+405 | Method Not Allowed -- 错误的请求Method.
+500 | Internal Server Error -- 服务器内部错误.
+503 | Service Unavailable -- 服务器暂时不可用.

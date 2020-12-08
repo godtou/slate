@@ -1,6 +1,8 @@
 *.gem
 *.rbc
 .bundle
+.swp
+.swo
 .config
 coverage
 InstalledFiles

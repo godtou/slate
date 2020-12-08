@@ -1,15 +1,8 @@
 ---
-title: API Reference
+title: 方便面面试-接口文档
 
-language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
-  - ruby
-  - python
-  - javascript
-
-toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/slatedocs/slate'>Documentation Powered by Slate</a>
+language_tabs:
+  - shell: ""
 
 includes:
   - errors
@@ -19,223 +12,232 @@ search: true
 code_clipboard: true
 ---
 
-# Introduction
+# 统一说明
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+* 方便面面试API设计基于REST，使用标准的HTTP协议如HTTP方法、HTTP状态码来提供接入。所有的接口数据都通过JSON格式传输（包括错误信息），并使用Unicode UTF-8进行编码。当有字段值为空的时候，若为对象则返回为null，若为数组型，返回的结果为空数组[]，其他则为对应默认值
 
-We have language bindings in Shell, Ruby, Python, and JavaScript! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+* 为了提供更好的体验，方便面面试API在不断完善升级中。当更新中包含不向后兼容的接口时，我们会升级API版本，并保留旧的API正常运行。这意味着在接入方便面面试API时，你的代码需要能够处理一些如返回数据字段增加等向后兼容的变动。目前的API版本是v0.1。
 
-This example API documentation page was created with [Slate](https://github.com/slatedocs/slate). Feel free to edit it and use it as a base for your own API's documentation.
+* 所有的请求都必须通过HTTPS发送。
+## 接口地址
 
-# Authentication
+* 生产环境：`https://open.fbmms.cn`
 
-> To authorize, use this code:
+* 开发环境: `https://open-dev.fbmms.cn`
 
-```ruby
-require 'kittn'
+## 返回说明
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here" \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens" \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2" \
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
+> 返回样例
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+    "code": 200,
+    "msg": "OK"
+    "data": {
+    }
 }
 ```
 
-This endpoint retrieves a specific kitten.
+* 所有接口基于REST风格，HTTP状态码返回，200 代表请求成功，非200代表请求异常。
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+* **除绑定认证/OAuth2相关接口外**, 为了业务的向后兼容性，响应body中会增加`code-业务状态码`, `msg-业务信息` 两个字段来扩展业务信息返回, 暂时这两个字段并无特殊意义，和HTTP响应状态码和状态相同。真实响应内容在`data - 字段中`
 
-### HTTP Request
+## 时间格式
 
-`GET http://example.com/kittens/<ID>`
+当前API版本返回的时间类型共有以下几种格式：
 
-### URL Parameters
+类型 | 格式 | 例子 | 例子的含义
+---- | ---- | ---- | ----
+精确到年的日期 | yyyy | 2020 | 例如毕业年份
+精确到月的日期 | yyyy-MM | 2020-01 | 例如毕业日期
+精确到日的日期 | yyyy-MM-dd | 2020-01-01 | 例如入职日期
+精确到时、分、秒的日期 | yyyy-MM-ddTHH:mm:ss.sssZ | 2018-09-27T02:00:00.000Z | 例如面试开始时间
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+其中，`yyyy-MM-ddTHH:mm:ss.sssZ`的格式遵循ISO8601标准.
+# 绑定认证/OAuth
 
-## Delete a Specific Kitten
+## 流程
 
-```ruby
-require 'kittn'
+> OAuth2交互流程
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
+```
++--------+                                          +-------------+
+|        |--(A)------- Authorization Grant -------->|             |
+|        |                                          |             |
+|        |<-(B)----------- Access Token ------------|             |
+|        |               & Refresh Token            |             |
+|        |                                          |             |
+|        |                            +----------+  |             |
+|        |--(C)---- Access Token ---->|          |  |             |
+|        |                            |          |  |             |
+|        |<-(D)- Protected Resource --| Resource |  |Authorization|
+| Client |                            |  Server  |  |    Server   |
+|        |--(E)---- Access Token ---->|          |  |             |
+|        |                            |          |  |             |
+|        |<-(F)- Invalid Token Error -|          |  |             |
+|        |                            +----------+  |             |
+|        |                                          |             |
+|        |--(G)----------- Refresh Token ---------->|             |
+|        |                                          |             |
+|        |<-(H)----------- Access Token ------------|             |
++--------+           & Optional Refresh Token       +-------------+
 ```
 
-```python
-import kittn
+采用OAuth2.0 进行授权, 参考<a href="https://oauth.net/2/">OAuth2官网</a>
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
+说明：
+
+1. 第三方供应商向方便面面试提供授权回调地址, 基本注册信息进行注册, 方便面面试向第三方供应商发放clientId与clientSecret。
+
+3. 第三方供应商带着clientId与redirectUri将用户导向至方便面面试OAuth授权认证页面。
+
+4. 授权验证成功后方便面面试内部绑定成功，然后带着一次性code将跳转回redirectUri。
+
+5. 第三方供应商用code与clientSecret等请求方便面面试提供的API得到accessToken、refreshToken、appId（每次绑定产生唯一值，accessToken与方便面面试用户绑定，appId与第三方供应商用户绑定）等信息，第三方供应商绑定成功。
+
+**补充**
+
+第三方供应商通过refreshToken维护accessToken长时间有效，如过期，需要用户重新授权。
+
+## 跳转OAuth授权页面
+> 请求URL示例:
 
 ```shell
-curl "http://example.com/api/kittens/2" \
-  -X DELETE \
-  -H "Authorization: meowmeowmeow"
+https://open.fbmms.cn/oauth/authorize?clientId=YOUR_CLIENT_ID&redirectUri=YOUR_URL_ENCODE_REDIRECT_URI&scope=YOUR_SCOPE&state=YOUR_STATE
 ```
 
-```javascript
-const kittn = require('kittn');
+### 请求地址：
+`GET /oauth/authorize`
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
+### 请求参数:
+
+字段 | 必填 | 类型 | 描述
+--- | --- | --- | ---
+clientId | 是 | String | 方便面生产的Client唯一标识
+redirectUri | 是 | String | 重定向地址，必须为开通时填写的一致, 需进行URL_ENCODE处理
+scope | 是| String | 第三方巩营乡所拥有的权限: 
+state | 否| String | 在回调时，会回传state参数给第三方供应商， 开发者可以验证state参数的有效性
+
+### 响应:（绑定后，浏览器页面会跳转到回调地址）
+redirectUri?code=xxxx
+
+**例：http://www.xxx.com/redirect?code=xxx**
+
+**注：**
+
+1. code参数会拼接到回调地址url上
+
+2. code有效期为五分钟
+
+## 获取access_token
+> 请求示例:
+
+```shell
+curl -X POST \
+  https://open.fbmms.cn/oauth/token \
+  --header 'Content-Type: application/json' \
+  --data '{"clientId":"YOUR_CLIENT_ID","clientSecret":"YOUR_CLIENT_SECRET","code":"RETURN_CODE", "redirectUri":"YOUR_REDIECT_URI"}'
 ```
 
-> The above command returns JSON structured like this:
+> 响应示例:
 
 ```json
 {
-  "id": 2,
-  "deleted" : ":("
+ "access_token": "de6780bc506a0446309bd9362820ba8aed28aa506c71eedbe1c5c4f9dd350e54",
+ "accessTokenExpiresAt": "2019-03-24T05:45:39.014Z" ,
+ "refresh_token": "8257e65c97202ed1726cf9571600918f3bffb2544b26e00a61df9897668c33a1",
+ "refreshTokenExpiresAt": "2019-03-24T05:45:39.014Z" ,
+ "scope": "",
+ "appId": "BDMxLbTWtIKvAuCCQH2ZcCquC73rZAMKTYpf"
 }
+
 ```
 
-This endpoint deletes a specific kitten.
+### 请求地址: 
+`POST /oauth/token`
+### 请求参数:
 
-### HTTP Request
+字段 | 必填 | 类型 | 描述
+--- | --- | --- | ---
+code | 是 | String | 上一步获得的Code
+clientId | 是 | String | 开通时提供
+clientSecret| 是| String | 开通是提供 
+redirectUri | 否| String | 上一步填写的redirectUri
 
-`DELETE http://example.com/kittens/<ID>`
+### 响应:
 
-### URL Parameters
+字段 | 必填 | 类型 | 描述
+--- | --- | --- | ---
+accessToken | String | 访问方便面面试接口所需的Token
+accessTokenExpiresAt | String | refreshToken的过期时间 \n 如:2019-03-24T05:45:39.014Z \n 默认为30天
+refreshToken | String | 用于刷新accessToken的refreshToken
+refreshTokenExpiresAt | String | refreshToken的过期时间 \n 如:2019-03-24T05:45:39.014Z \n 默认为60天
+scope | String | 该Token所拥有的权限
+appId | String | 每次绑定方便面面试生成的唯一值,建议与第三方供应商账号绑定
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+## 刷新access_token
+> 请求示例:
 
+```shell
+curl -X POST \
+  https://open.fbmms.cn/oauth/refreshToken \
+  --header 'Content-Type: application/json' \
+  --data '{"clientId":"YOUR_CLIENT_ID","clientSecret":"YOUR_CLIENT_SECRET", "refreshToken":"YOUR_REFRESH_TOKEN"}'
+
+```
+
+> 响应示例:
+
+```json
+{
+ "access_token": "de6780bc506a0446309bd9362820ba8aed28aa506c71eedbe1c5c4f9dd350e54",
+ "accessTokenExpiresAt": "2019-03-24T05:45:39.014Z" ,
+ "refresh_token": "8257e65c97202ed1726cf9571600918f3bffb2544b26e00a61df9897668c33a1",
+ "refreshTokenExpiresAt": "2019-03-24T05:45:39.014Z" ,
+ "scope": ""
+}
+
+```
+
+### 请求地址:
+`POST /oauth/refreshToken`
+### 请求参数:
+
+字段 | 必填 | 类型 | 描述
+--- | --- | --- | ---
+refreshToken | 是 | String | 刷新accessToken的refreshToken
+clientId | 是 | String | 开通时提供
+clientSecret| 是| String | 开通是提供 
+
+### 响应:
+
+字段 | 必填 | 类型 | 描述
+--- | --- | --- | ---
+accessToken | String | 访问方便面面试接口所需的Token
+accessTokenExpiresAt | String | refreshToken的过期时间 \n 如:2019-03-24T05:45:39.014Z \n 默认为30天
+refreshToken | String | 用于刷新accessToken的refreshToken
+refreshTokenExpiresAt | String | refreshToken的过期时间 \n 如:2019-03-24T05:45:39.014Z \n 默认为60天
+appId | String | 每次绑定moka生成的唯一值,建议与第三方供应商账号绑定
+
+## 删除绑定
+> 请求示例:
+
+```shell
+curl -X POST \
+  https://open.fbmms.cn/oauth/unbind \
+  --header 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{"clientId":"YOUR_CLIENT_ID","clientSecret":"YOUR_CLIENT_SECRET","appId":"YOUR_APP_ID"}'
+```
+
+### 请求地址:
+`DELETE /oauth/unbind`
+### 请求参数:
+
+字段 | 必填 | 类型 | 描述
+--- | --- | --- | ---
+appId | 是 | String | 每次绑定方便面面试生成的唯一值
+clientId | 是 | String | 开通时提供
+clientSecret| 是| String | 开通是提供 
+
+# 岗位流程
